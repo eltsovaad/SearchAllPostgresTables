@@ -62,11 +62,21 @@ int main()
 
 	int nrows = PQntuples(res);
 	cout << "Found " << nrows << " columns to check" << endl;
+	cout << "Value to find: ";
+	string value;
+	cin >> value;
+	while (cin.fail()) {
+		cin.clear();
+		cin.ignore(cin.rdbuf()->in_avail());
+		cout << "Try again: ";
+		cin >> value;
+	}
+	cout << "Search started!" << endl;
 	for (int i = 0; i < nrows; i++)
 	{
 		string table_name = PQgetvalue(res, i, 0);
 		string column_name = PQgetvalue(res, i, 1);
-		string stringReq = "select "+column_name+" from " + table_name + " where "+column_name+" = 31415926535";
+		string stringReq = "select "+column_name+" from " + table_name + " where "+column_name+" = "+value;
 	    const char *charReq = stringReq.c_str();
 		PGresult* resTemp = NULL;
 		resTemp = PQexec(conn, charReq);
@@ -76,9 +86,9 @@ int main()
 		else {
 			int numberOfRows = PQntuples(resTemp);
 			if (numberOfRows > 0) {
-				cout << "Table: " << table_name << endl;
-				cout << "Column: " << column_name << endl;
-				cout << numberOfRows << " rows" << endl;
+				cout << "	Table: " << table_name << endl;
+				cout << "	Column: " << column_name << endl;
+				cout << "	"<<numberOfRows << " rows" << endl;
 			}
 			clearRes(resTemp);
 		}
